@@ -1,0 +1,244 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #0B0B10;
+  --color-text-muted: #4a4a5a;
+  --color-accent-orange: #FF6B00;
+  --color-accent-pink: #FF3366;
+  --color-accent-cyan: #00D4FF;
+  --color-glass-bg: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --font-heading: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: #0B0B10;
+    color: #ffffff;
+    font-family: "Space Grotesk", sans-serif;
+    cursor: none;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: rgba(255, 107, 0, 0.3);
+    color: #ffffff;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  button {
+    font-family: inherit;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #FF6B00, #FF3366, #00D4FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.15);
+  }
+
+  .spin-slow {
+    animation: spin 60s linear infinite;
+  }
+
+  .spin-reverse {
+    animation: spin 40s linear infinite reverse;
+  }
+
+  .pulse-ring {
+    animation: pulseRing 4s ease-in-out infinite;
+  }
+
+  .pulse-ring-delayed {
+    animation: pulseRing 4s ease-in-out 1.5s infinite;
+  }
+
+  .hero-title-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(80px);
+    animation: charUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .hero-typewriter {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid #00D4FF;
+    width: 0;
+    animation:
+      typeIn 1.8s steps(18, end) 1.4s forwards,
+      blink 0.7s step-end 3.2s infinite;
+  }
+
+  .hud-corner-line {
+    stroke-dasharray: 80;
+    stroke-dashoffset: 80;
+    animation: dashIn 1.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
+  .cinema-bar {
+    animation: cinemaBar 1.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
+  .stat-callout {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: statIn 0.8s ease-out forwards;
+  }
+
+  .scan-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 212, 255, 0.4),
+      transparent
+    );
+    animation: scan 6s linear infinite;
+    pointer-events: none;
+  }
+
+  .tilt-card {
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out;
+    will-change: transform;
+  }
+
+  .mission-dot {
+    animation: missionPulse 2s ease-in-out infinite;
+  }
+
+  .tab-active-glow {
+    box-shadow:
+      0 0 20px rgba(0, 212, 255, 0.3),
+      inset 0 0 12px rgba(0, 212, 255, 0.1);
+  }
+
+  .hero-planet-glow {
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(0, 212, 255, 0.15) 0%,
+      transparent 70%
+    );
+    filter: blur(40px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseRing {
+  0%, 100% {
+    transform: translateY(-50%) scale(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.06);
+    opacity: 0.45;
+  }
+}
+
+@keyframes charUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dashIn {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes typeIn {
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+
+@keyframes cinemaBar {
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes statIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scan {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes missionPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 212, 255, 0);
+    transform: scale(1.15);
+  }
+}

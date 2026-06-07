@@ -1,0 +1,30 @@
+Mục tiêu của bạn là tái cấu trúc các hành tinh và Mặt Trời thành các thực thể rỗng (Hollow/Wireframe 3D) chân thực như tư liệu của NASA nhưng mang phong cách tương lai siêu thực.
+
+Task: Hãy viết mã nguồn (HTML/SVG/CSS hoặc Tailwind) để dựng lại mô hình các hành tinh rỗng bằng cách áp dụng bắt buộc 2 kỹ thuật nâng cao sau đây, thể hiện rõ tư duy thẩm mỹ cao cấp:
+
+1. Kỹ thuật Quỹ đạo chuyển động (SVG Math Filters & Dynamic Ellipse):
+- Sử dụng thẻ `<svg>` và các thẻ `<ellipse>` rỗng (fill="none") để làm đường quỹ đạo xung quanh hành tinh.
+- BẮT BUỘC dùng thuộc tính `stroke-dasharray` kết hợp với CSS Animation `stroke-dashoffset` để tạo ra hiệu ứng các vạch đứt nét chuyển động mượt mà (chạy vòng quanh hành tinh như những luồng dữ liệu quét).
+- Yêu cầu Taste Skill: Độ dày của nét (stroke-width) phải cực mảnh (từ 0.5px đến 1px), sử dụng màu sắc có độ mờ (độ opacity khoảng 0.3 - 0.5) như xanh cyan mờ, trắng neon mờ để tạo cảm giác tinh tế, không bị thô.
+
+2. Kỹ thuật Tạo chiều sâu 3D bằng CSS Webkit-mask-image (Phần cốt lõi):
+- Khi vẽ một hành tinh lưới rỗng (Wireframe Sphere), mặt lưng phía sau (back-face) và mặt trước (front-face) không được phép sáng bằng nhau vì sẽ làm mất đi hiệu ứng không gian 3D.
+- BẮT BUỘC sử dụng kỹ thuật Mặt nạ che `webkit-mask-image` hoặc `mask-image` kết hợp với `linear-gradient` / `radial-gradient` để xử lý: Làm cho phần lưới ở mặt lưng (phía khuất ánh sáng/phía sau) mờ hẳn đi, hòa vào bóng tối của vũ trụ; trong khi phần lưới phía trước đón ánh sáng Mặt Trời (Rim light) sẽ sáng rõ và sắc nét.
+- Yêu cầu Taste Skill: Điểm giao thoa giữa vùng sáng và vùng tối trên lưới hành tinh phải có độ chuyển mượt mà (smooth feathering), mô phỏng chính xác hướng sáng phát ra từ lõi Mặt Trời ở trung tâm màn hình.
+
+Yêu cầu đầu ra:
+- Giải thích tư duy xử lý không gian (Tại sao góc này mờ, góc kia sáng dựa trên Taste Skill).
+- Cung cấp đoạn mã sạch (Clean Code) chạy được bao gồm SVG nâng cao và các class CSS/Tailwind để xử lý hiệu ứng Masking và Animation đứt nét chuyển động.
+
+dùng tool frames to video tạo hinh ahnh thật cinematic để web site có nhưng chuyển động thật mượt mà chuyển/
+1. MẶT TRỜI
+Kết cấu (Texture): tự download — ảnh chụp mặt trời thực tế.
+Shader tùy chỉnh (src/shaders.ts):
+- Vertex shader: Chuẩn — truyền UV, normal, vị trí.
+- Fragment shader: 
+- Lấy texture gốc (uTexture).
+- Plasma noise: snoise(vUv * 4 + time) + snoise(vUv * 8 - time) tạo hiệu ứng bề mặt dung nham chuyển động.
+- uColor (cam #FF8C00) nhân với noise → tạo màu lửa, thay đổi theo thời gian.
+- uCMEIntensity — khi bão mặt trời, màu plasma sáng hơn 1.5×.
+- Mix: texture * 60% + plasma * 40% → mặt trời vừa có ảnh thật, vừa có plasma động.
+Tổng: 1 hình cầu × ShaderMaterial = texture thực + noise động + màu lửa biến thiên.
