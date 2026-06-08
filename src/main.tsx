@@ -8,7 +8,7 @@ import App from './App'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/hemattroi">
         <App />
       </BrowserRouter>
     </HelmetProvider>
