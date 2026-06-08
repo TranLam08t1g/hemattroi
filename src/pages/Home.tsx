@@ -7,6 +7,7 @@ import { SceneSetup } from '../components/three/SceneSetup'
 import { HeroSection } from '../components/sections/HeroSection'
 import { TechnicalPanel } from '../components/ui/TechnicalPanel'
 import { GlassCard } from '../components/ui/GlassCard'
+import { ErrorBoundary } from '../components/ui/ErrorBoundary'
 import { COUNTERS } from '../data/constants'
 
 gsap.registerPlugin(useGSAP)
@@ -34,7 +35,9 @@ export function Home() {
         />
       </Helmet>
 
-      <SceneSetup />
+      <ErrorBoundary>
+        <SceneSetup />
+      </ErrorBoundary>
 
       <div className="fixed inset-0 z-[2] pointer-events-none">
         <div className="absolute bottom-[130px] left-[60px] pointer-events-auto max-sm:left-[24px] max-sm:bottom-[80px]">

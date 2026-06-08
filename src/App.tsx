@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import { ErrorBoundary } from './components/ui/ErrorBoundary'
 import { RootLayout } from './components/layout/RootLayout'
 import { Home } from './pages/Home'
 import { Planets } from './pages/Planets'
@@ -8,7 +9,8 @@ import { Gallery } from './pages/Gallery'
 
 export default function App() {
   return (
-    <Routes>
+    <ErrorBoundary>
+      <Routes>
       <Route element={<RootLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/planets" element={<Planets />} />
@@ -17,5 +19,6 @@ export default function App() {
         <Route path="/gallery" element={<Gallery />} />
       </Route>
     </Routes>
+    </ErrorBoundary>
   )
 }
