@@ -1,4 +1,4 @@
-import { useMemo, createRef } from 'react'
+import { useMemo, createRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
@@ -11,6 +11,7 @@ import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { TiltCard } from '../components/ui/TiltCard'
 import { SharedPlanetCanvas } from '../components/three/SharedPlanetCanvas'
 import { Planet3D } from '../components/three/Planet3D'
+import { CutawayButton } from '../components/ui/CutawayButton'
 import { PLANETS } from '../data/planets'
 import { useFilterStore } from '../store/filterStore'
 import { filterPlanets, sortPlanets, countByType } from '../utils/sortPlanets'
@@ -42,6 +43,7 @@ const SLOT_MAP: Record<string, SlotConfig> = {
 export function Planets() {
   const type = useFilterStore((s) => s.type)
   const sort = useFilterStore((s) => s.sort)
+  const [cutawayId, setCutawayId] = useState<string | null>(null)
 
   const counts = useMemo(() => countByType(PLANETS), [])
   const filtered = useMemo(
@@ -83,6 +85,7 @@ export function Planets() {
               hexColor={planet.hexColor}
               radius={planet.radius * 0.9}
               segments={32}
+              cutaway={cutawayId === planet.id}
             />
           </View>
         ))}
@@ -133,13 +136,19 @@ export function Planets() {
                 >
                   <div ref={cardRefs[planet.id] as RefObject<HTMLDivElement>}>
                     <ScrollReveal delay={i * 0.05} stagger={false}>
-                      <TiltCard className="block h-full">
+                      <TiltCard className="relative block h-full">
                         <Link
                           to={`/planets/${planet.id}`}
                           className="block h-full"
                         >
                           <PlanetCard planet={planet} />
                         </Link>
+                        <CutawayButton
+                          active={cutawayId === planet.id}
+                          onToggle={() =>
+                            setCutawayId(cutawayId === planet.id ? null : planet.id)
+                          }
+                        />
                       </TiltCard>
                     </ScrollReveal>
                   </div>

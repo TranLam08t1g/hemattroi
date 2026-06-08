@@ -1,4 +1,4 @@
-import { useMemo, createRef } from 'react'
+import { useMemo, createRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { motion } from 'motion/react'
@@ -9,6 +9,7 @@ import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { TiltCard } from '../components/ui/TiltCard'
 import { SharedPlanetCanvas } from '../components/three/SharedPlanetCanvas'
 import { Planet3D } from '../components/three/Planet3D'
+import { CutawayButton } from '../components/ui/CutawayButton'
 import { PLANETS } from '../data/planets'
 import { TYPE_DISPLAY } from '../utils/planetHelpers'
 
@@ -19,6 +20,8 @@ const typeAccent: Record<string, string> = {
 }
 
 export function Gallery() {
+  const [cutawayId, setCutawayId] = useState<string | null>(null)
+
   const cardRefs = useMemo<Record<string, RefObject<HTMLElement | null>>>(() => {
     const refs: Record<string, RefObject<HTMLElement | null>> = {}
     PLANETS.forEach((p) => {
@@ -53,6 +56,7 @@ export function Gallery() {
               hexColor={planet.hexColor}
               radius={planet.radius * 1.1}
               segments={64}
+              cutaway={cutawayId === planet.id}
             />
           </View>
         ))}
@@ -76,12 +80,18 @@ export function Gallery() {
         <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {PLANETS.map((planet, i) => (
             <ScrollReveal key={planet.id} delay={i * 0.08} y={40}>
-              <TiltCard max={6} scale={1.03}>
+              <TiltCard max={6} scale={1.03} className="relative">
                 <Link to={`/planets/${planet.id}`} className="block">
                   <div ref={cardRefs[planet.id] as RefObject<HTMLDivElement>}>
                     <GalleryCard planet={planet} />
                   </div>
                 </Link>
+                <CutawayButton
+                  active={cutawayId === planet.id}
+                  onToggle={() =>
+                    setCutawayId(cutawayId === planet.id ? null : planet.id)
+                  }
+                />
               </TiltCard>
             </ScrollReveal>
           ))}

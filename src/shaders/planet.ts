@@ -2,9 +2,11 @@ export const planetVertexShader = `
 varying vec2 vUv;
 varying vec3 vNormal;
 varying vec3 vViewDir;
+varying vec3 vLocalPos;
 
 void main() {
   vUv = uv;
+  vLocalPos = position;
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
   vNormal = normalize(normalMatrix * normal);
   vec4 worldPos = modelMatrix * vec4(position, 1.0);
@@ -17,6 +19,7 @@ export const planetFragmentShader = `
 varying vec2 vUv;
 varying vec3 vNormal;
 varying vec3 vViewDir;
+varying vec3 vLocalPos;
 
 uniform sampler2D uTexture;
 uniform vec3 uPlanetColor;
@@ -24,6 +27,7 @@ uniform float uTime;
 uniform float uEffectIntensity;
 uniform vec2 uAnimSpeed;
 uniform float uPlanetType;
+uniform float uClipEnabled;
 
 /* -- noise functions -- */
 float hash(vec2 p) {
@@ -54,6 +58,13 @@ float fbm(vec2 p) {
 }
 
 void main() {
+  /* -- Cutaway clipping: discard 1/4 wedge -- */
+  if (uClipEnabled > 0.5) {
+    if (vLocalPos.x > 0.0 && vLocalPos.z > 0.0) {
+      discard;
+    }
+  }
+
   vec4 texColor = texture2D(uTexture, vUv);
   vec3 base = texColor.rgb;
   vec3 detail = vec3(0.0);

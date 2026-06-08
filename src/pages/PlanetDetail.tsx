@@ -12,6 +12,7 @@ import { CinemaIntro } from '../components/ui/CinemaIntro'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { planetVertexShader, planetFragmentShader } from '../shaders/planet'
 import { DEFAULT_WHITE, getPlanetType, getPlanetParams, TYPE_DISPLAY, STATUS_VI } from '../utils/planetHelpers'
+import { COMPOSITION } from '../data/compositions'
 import { Planet3D } from '../components/three/Planet3D'
 
 type Tab = 'overview' | 'profile' | 'moons' | 'missions'
@@ -22,53 +23,6 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'moons', label: 'Vệ Tinh' },
   { key: 'missions', label: 'Sứ Mệnh' },
 ]
-
-const COMPOSITION: Record<string, { label: string; pct: number }[]> = {
-  mercury: [
-    { label: 'Lõi Sắt', pct: 75 },
-    { label: 'Lớp Phủ Silicat', pct: 22 },
-    { label: 'Đất Bề Mặt', pct: 3 },
-  ],
-  venus: [
-    { label: 'Lõi Sắt', pct: 30 },
-    { label: 'Lớp Phủ Silicat', pct: 60 },
-    { label: 'Khí Quyển CO₂', pct: 10 },
-  ],
-  earth: [
-    { label: 'Lõi Sắt', pct: 32 },
-    { label: 'Lớp Phủ Silicat', pct: 50 },
-    { label: 'Thủy Quyển', pct: 13 },
-    { label: 'Khí Quyển', pct: 5 },
-  ],
-  mars: [
-    { label: 'Lõi Sắt', pct: 25 },
-    { label: 'Lớp Phủ Silicat', pct: 55 },
-    { label: 'Khí Quyển CO₂', pct: 10 },
-    { label: 'Băng Cực', pct: 10 },
-  ],
-  jupiter: [
-    { label: 'Hydro', pct: 73 },
-    { label: 'Heli', pct: 24 },
-    { label: 'Nguyên Tố Vết', pct: 3 },
-  ],
-  saturn: [
-    { label: 'Hydro', pct: 75 },
-    { label: 'Heli', pct: 23 },
-    { label: 'Nguyên Tố Vết', pct: 2 },
-  ],
-  uranus: [
-    { label: 'Hydro', pct: 50 },
-    { label: 'Heli', pct: 20 },
-    { label: 'Băng Methane', pct: 25 },
-    { label: 'Silicat', pct: 5 },
-  ],
-  neptune: [
-    { label: 'Hydro', pct: 50 },
-    { label: 'Heli', pct: 20 },
-    { label: 'Băng Methane', pct: 25 },
-    { label: 'Silicat', pct: 5 },
-  ],
-}
 
 interface HeroPlanet3DProps {
   planetId: string
@@ -102,16 +56,29 @@ function HeroPlanet3D({ planetId, hexColor, radius }: HeroPlanet3DProps) {
 
   useEffect(() => {
     let mounted = true
+    const BASE = import.meta.env.BASE_URL || '/'
     const loader = new THREE.TextureLoader()
     loader.load(
-      `/textures/2k_${planetId}.jpg`,
+      `${BASE}textures/4k_${planetId}.jpg`,
       (tex) => {
         if (!mounted) return
         tex.colorSpace = THREE.SRGBColorSpace
         setTexture(tex)
       },
       undefined,
-      () => {},
+      () => {
+        if (!mounted) return
+        loader.load(
+          `${BASE}textures/2k_${planetId}.jpg`,
+          (tex) => {
+            if (!mounted) return
+            tex.colorSpace = THREE.SRGBColorSpace
+            setTexture(tex)
+          },
+          undefined,
+          () => {},
+        )
+      },
     )
     return () => {
       mounted = false

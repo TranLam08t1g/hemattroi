@@ -4,12 +4,14 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { planetVertexShader, planetFragmentShader } from '../../shaders/planet'
 import { DEFAULT_WHITE, getPlanetType, getPlanetParams } from '../../utils/planetHelpers'
+import { CrossSection } from './CrossSection'
 
 interface Planet3DProps {
   planetId: string
   hexColor: number
   radius: number
   segments?: number
+  cutaway?: boolean
 }
 
 export function Planet3D({
@@ -17,6 +19,7 @@ export function Planet3D({
   hexColor,
   radius,
   segments = 32,
+  cutaway = false,
 }: Planet3DProps) {
   const meshRef = useRef<THREE.Mesh>(null)
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
@@ -33,6 +36,7 @@ export function Planet3D({
       uEffectIntensity: { value: params.intensity },
       uAnimSpeed: { value: new THREE.Vector2(params.animX, params.animY) },
       uPlanetType: { value: typeVal },
+      uClipEnabled: { value: 0 },
     }),
     [activeTexture, hexColor, typeVal, params],
   )
@@ -46,17 +50,34 @@ export function Planet3D({
   )
 
   useEffect(() => {
+    uniforms.uClipEnabled.value = cutaway ? 1 : 0
+  }, [cutaway, uniforms])
+
+  useEffect(() => {
     let mounted = true
+    const BASE = import.meta.env.BASE_URL || '/'
     const loader = new THREE.TextureLoader()
     loader.load(
-      `/textures/2k_${planetId}.jpg`,
+      `${BASE}textures/4k_${planetId}.jpg`,
       (tex) => {
         if (!mounted) return
         tex.colorSpace = THREE.SRGBColorSpace
         setTexture(tex)
       },
       undefined,
-      () => {},
+      () => {
+        if (!mounted) return
+        loader.load(
+          `${BASE}textures/2k_${planetId}.jpg`,
+          (tex) => {
+            if (!mounted) return
+            tex.colorSpace = THREE.SRGBColorSpace
+            setTexture(tex)
+          },
+          undefined,
+          () => {},
+        )
+      },
     )
     return () => {
       mounted = false
@@ -80,14 +101,20 @@ export function Planet3D({
           uniforms={uniforms}
         />
       </mesh>
-      <lineSegments geometry={wireframeGeo}>
-        <lineBasicMaterial
-          color={hexColor}
-          transparent
-          opacity={0.2}
-          depthWrite={false}
-        />
-      </lineSegments>
+      {cutaway && (
+        <>
+          <lineSegments geometry={wireframeGeo}>
+            <lineBasicMaterial
+              color={hexColor}
+              transparent
+              opacity={0.25}
+              depthTest
+              depthWrite={false}
+            />
+          </lineSegments>
+          <CrossSection planetId={planetId} radius={radius} />
+        </>
+      )}
     </group>
   )
 }
