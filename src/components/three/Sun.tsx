@@ -61,12 +61,6 @@ export function Sun() {
     return new THREE.CanvasTexture(canvas)
   }, [])
 
-  // Wireframe sphere overlay (giống Planet pattern)
-  const wireframeGeo = useMemo(
-    () => new THREE.EdgesGeometry(new THREE.SphereGeometry(2.42, 32, 16)),
-    [],
-  )
-
   const activeTex = videoTex ?? FALLBACK_TEX
 
   const uniforms = useMemo(
@@ -154,17 +148,6 @@ export function Sun() {
           uniforms={uniforms}
         />
       </mesh>
-
-      {/* Wireframe overlay — sphere (giống Planet) */}
-      <lineSegments geometry={wireframeGeo}>
-        <lineBasicMaterial
-          color="#FF6B00"
-          transparent
-          opacity={0.18}
-          depthTest
-          depthWrite={false}
-        />
-      </lineSegments>
 
       <sprite ref={glowRef} scale={[14, 14, 1]}>
         <spriteMaterial
