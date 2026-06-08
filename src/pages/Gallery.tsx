@@ -7,9 +7,8 @@ import { View } from '@react-three/drei'
 import { CinemaIntro } from '../components/ui/CinemaIntro'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { TiltCard } from '../components/ui/TiltCard'
-import { OrbitToggle } from '../components/ui/OrbitToggle'
 import { SharedPlanetCanvas } from '../components/three/SharedPlanetCanvas'
-import { PlanetWithMoons } from '../components/three/PlanetWithMoons'
+import { Planet3D } from '../components/three/Planet3D'
 import { PLANETS } from '../data/planets'
 import { TYPE_DISPLAY } from '../utils/planetHelpers'
 
@@ -49,7 +48,7 @@ export function Gallery() {
               intensity={1.0}
               color="#ffffff"
             />
-            <PlanetWithMoons
+            <Planet3D
               planetId={planet.id}
               hexColor={planet.hexColor}
               radius={planet.radius * 1.1}
@@ -90,8 +89,6 @@ export function Gallery() {
           ))}
         </div>
       </div>
-
-      <OrbitToggle />
     </>
   )
 }

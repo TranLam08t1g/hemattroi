@@ -30,12 +30,78 @@ interface HeroPlanet3DProps {
   radius: number
 }
 
+function OrbitLine({ radius, color = 0x00d4ff }: { radius: number; color?: number }) {
+  const line = useMemo(() => {
+    const pts: THREE.Vector3[] = []
+    const segments = 64
+    for (let i = 0; i <= segments; i++) {
+      const a = (i / segments) * Math.PI * 2
+      pts.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius))
+    }
+    const geo = new THREE.BufferGeometry().setFromPoints(pts)
+    const mat = new THREE.LineDashedMaterial({
+      color,
+      dashSize: 0.12,
+      gapSize: 0.18,
+      transparent: true,
+      opacity: 0.22,
+      depthTest: true,
+      depthWrite: false,
+    })
+    const l = new THREE.Line(geo, mat)
+    l.computeLineDistances()
+    return l
+  }, [radius, color])
+
+  return <primitive object={line} />
+}
+
+function OrbitingMoonMesh({
+  moon,
+  orbitRadius,
+  moonSize,
+}: {
+  moon: ReturnType<typeof getMoonsForPlanet>[number]
+  orbitRadius: number
+  moonSize: number
+}) {
+  const groupRef = useRef<THREE.Group>(null)
+  const angleRef = useRef(moon.startAngle)
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return
+    angleRef.current += moon.speed * delta * 0.5
+    groupRef.current.position.x = Math.cos(angleRef.current) * orbitRadius
+    groupRef.current.position.z = Math.sin(angleRef.current) * orbitRadius
+    groupRef.current.position.y = Math.sin(angleRef.current * 0.25) * 0.04
+    groupRef.current.rotation.y += delta * 0.6
+  })
+
+  return (
+    <group ref={groupRef}>
+      <mesh>
+        <sphereGeometry args={[moonSize, 10, 10]} />
+        <meshStandardMaterial
+          color={moon.color}
+          emissive={moon.color}
+          emissiveIntensity={0.25}
+          roughness={0.6}
+        />
+      </mesh>
+    </group>
+  )
+}
+
 function HeroPlanet3D({ planetId, hexColor, radius }: HeroPlanet3DProps) {
   const meshRef = useRef<THREE.Mesh>(null)
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
   const activeTexture = texture ?? DEFAULT_WHITE
   const typeVal = useMemo(() => getPlanetType(planetId), [planetId])
   const params = useMemo(() => getPlanetParams(planetId), [planetId])
+
+  const planet = PLANETS.find((p) => p.id === planetId)
+  const moons = planet ? getMoonsForPlanet(planet.id) : []
+  const dataRadius = planet ? planet.radius : 1
 
   const uniforms = useMemo(
     () => ({
@@ -110,6 +176,16 @@ function HeroPlanet3D({ planetId, hexColor, radius }: HeroPlanet3DProps) {
           depthWrite={false}
         />
       </lineSegments>
+      {moons.map((moon) => {
+        const scaledOrbit = moon.orbitRadius * (radius / dataRadius)
+        const scaledSize = Math.max(0.04, moon.radius * (radius / dataRadius) * 0.2)
+        return (
+          <group key={moon.id}>
+            <OrbitLine radius={scaledOrbit} color={moon.hexColor} />
+            <OrbitingMoonMesh moon={moon} orbitRadius={scaledOrbit} moonSize={scaledSize} />
+          </group>
+        )
+      })}
     </group>
   )
 }
