@@ -83,8 +83,9 @@ export function Sun() {
   )
 
   useEffect(() => {
+    const BASE = import.meta.env.BASE_URL || '/'
     const video = document.createElement('video')
-    video.src = '/textures/sun-procedural.mp4'
+    video.src = `${BASE}textures/sun-procedural.mp4`
     video.loop = true
     video.muted = true
     video.playsInline = true

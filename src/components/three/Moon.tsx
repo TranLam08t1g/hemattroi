@@ -79,8 +79,9 @@ export function Moon({ data }: MoonProps) {
 
   useEffect(() => {
     const loader = new THREE.TextureLoader()
+    const BASE = import.meta.env.BASE_URL || '/'
     loader.load(
-      `/textures/moon_${data.id}.jpg`,
+      `${BASE}textures/moon_${data.id}.jpg`,
       (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace
         setTexture(tex)

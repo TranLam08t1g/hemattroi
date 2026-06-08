@@ -77,8 +77,9 @@ export function Planet({ data, moonOrbitRadii, children }: PlanetProps) {
 
   useEffect(() => {
     const loader = new THREE.TextureLoader()
+    const BASE = import.meta.env.BASE_URL || '/'
     loader.load(
-      `/textures/2k_${data.id}.jpg`,
+      `${BASE}textures/2k_${data.id}.jpg`,
       (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace
         setTexture(tex)
