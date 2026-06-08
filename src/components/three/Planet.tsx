@@ -70,11 +70,6 @@ export function Planet({ data, moonOrbitRadii, children }: PlanetProps) {
     [activeTexture, data.hexColor, typeVal, params],
   )
 
-  const wireframeGeo = useMemo(
-    () => new THREE.EdgesGeometry(new THREE.SphereGeometry(data.radius * 1.008, 48, 48)),
-    [data.radius],
-  )
-
   useEffect(() => {
     const loader = new THREE.TextureLoader()
     const BASE = import.meta.env.BASE_URL || '/'
@@ -101,12 +96,6 @@ export function Planet({ data, moonOrbitRadii, children }: PlanetProps) {
     uniforms.uTime.value += delta
   })
 
-  const wireColor = data.type === 'ice'
-    ? 0xaaccdd
-    : data.type === 'gas'
-      ? 0xccaa88
-      : data.hexColor
-
   return (
     <group ref={groupRef}>
       <mesh ref={meshRef}>
@@ -117,15 +106,6 @@ export function Planet({ data, moonOrbitRadii, children }: PlanetProps) {
           uniforms={uniforms}
         />
       </mesh>
-      <lineSegments geometry={wireframeGeo}>
-        <lineBasicMaterial
-          color={wireColor}
-          transparent
-          opacity={0.18}
-          depthTest
-          depthWrite={false}
-        />
-      </lineSegments>
       {data.hasRing && (
         <mesh ref={ringRef} rotation={[Math.PI * 0.5, 0, 0.3]}>
           <ringGeometry args={[data.radius * 1.3, data.radius * 2.2, 64]} />
