@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 const links = [
   { to: '/', label: 'Trang Chủ' },
-  { to: '/planets', label: 'Hành Tinh' },
+  { to: '/planets', label: 'Mặt Trăng' },
   { to: '/gallery', label: 'Thư Viện' },
   { to: '/about', label: 'Giới Thiệu' },
 ]

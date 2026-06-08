@@ -81,7 +81,7 @@ export function Moon({ data }: MoonProps) {
     const BASE = import.meta.env.BASE_URL || '/'
     const loader = new THREE.TextureLoader()
     loader.load(
-      `${BASE}textures/4k_moon_${data.id}.jpg`,
+      `${BASE}textures/4k_${data.id}.jpg`,
       (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace
         setTexture(tex)
@@ -89,7 +89,7 @@ export function Moon({ data }: MoonProps) {
       undefined,
       () => {
         loader.load(
-          `${BASE}textures/moon_${data.id}.jpg`,
+          `${BASE}textures/2k_${data.id}.jpg`,
           (tex) => {
             tex.colorSpace = THREE.SRGBColorSpace
             setTexture(tex)

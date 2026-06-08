@@ -274,7 +274,7 @@ export function PlanetDetail() {
                 <OverviewTab planet={planet} composition={composition} />
               )}
               {tab === 'profile' && <ProfileTab planet={planet} />}
-              {tab === 'moons' && <MoonsTab moons={moons} />}
+              {tab === 'moons' && <MoonsTab moons={moons} planetId={planet.id} />}
               {tab === 'missions' && <MissionsTab missions={missions} />}
             </motion.div>
           </AnimatePresence>
@@ -376,7 +376,7 @@ function ProfileTab({ planet }: { planet: (typeof PLANETS)[number] }) {
   )
 }
 
-function MoonsTab({ moons }: { moons: ReturnType<typeof getMoonsForPlanet> }) {
+function MoonsTab({ moons, planetId }: { moons: ReturnType<typeof getMoonsForPlanet>; planetId: string }) {
   if (moons.length === 0) {
     return (
       <div className="text-center font-mono text-[11px] tracking-[0.2em] text-[#4a4a5a]">
@@ -388,36 +388,38 @@ function MoonsTab({ moons }: { moons: ReturnType<typeof getMoonsForPlanet> }) {
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {moons.map((moon, i) => (
         <ScrollReveal key={moon.id} delay={i * 0.06}>
-          <div className="glass flex items-center gap-4 rounded-2xl p-4">
-            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full">
-              <Canvas
-                camera={{ position: [0, 0, 2.5], fov: 45, near: 0.1, far: 100 }}
-                gl={{ antialias: true }}
-                style={{ width: '100%', height: '100%', display: 'block' }}
-              >
-                <ambientLight intensity={0.4} color="#ffffff" />
-                <directionalLight position={[3, 2, 3]} intensity={1.0} color="#ffffff" />
-                <Planet3D
-                  planetId={moon.id}
-                  hexColor={moon.hexColor}
-                  radius={0.5}
-                  segments={24}
-                />
-              </Canvas>
+          <Link to={`/planets/${planetId}/moons/${moon.id}`}>
+            <div className="glass flex items-center gap-4 rounded-2xl p-4 transition-colors hover:border-[rgba(0,212,255,0.25)]">
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full">
+                <Canvas
+                  camera={{ position: [0, 0, 2.5], fov: 45, near: 0.1, far: 100 }}
+                  gl={{ antialias: true }}
+                  style={{ width: '100%', height: '100%', display: 'block' }}
+                >
+                  <ambientLight intensity={0.4} color="#ffffff" />
+                  <directionalLight position={[3, 2, 3]} intensity={1.0} color="#ffffff" />
+                  <Planet3D
+                    planetId={moon.id}
+                    hexColor={moon.hexColor}
+                    radius={0.5}
+                    segments={24}
+                  />
+                </Canvas>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-heading text-base tracking-[0.15em] text-white">
+                  {moon.name}
+                </h3>
+                <p className="mt-1 font-mono text-[9px] tracking-[0.2em] text-[#4a4a5a] uppercase">
+                  {moon.type in TYPE_DISPLAY ? TYPE_DISPLAY[moon.type] : moon.type} &middot; quỹ đạo {moon.orbitRadius} đv
+                </p>
+              </div>
+              <span
+                className="inline-block h-2 w-2 rounded-full"
+                style={{ backgroundColor: moon.color }}
+              />
             </div>
-            <div className="flex-1">
-              <h3 className="font-heading text-base tracking-[0.15em] text-white">
-                {moon.name}
-              </h3>
-              <p className="mt-1 font-mono text-[9px] tracking-[0.2em] text-[#4a4a5a] uppercase">
-                {moon.type in TYPE_DISPLAY ? TYPE_DISPLAY[moon.type] : moon.type} &middot; quỹ đạo {moon.orbitRadius} đv
-              </p>
-            </div>
-            <span
-              className="inline-block h-2 w-2 rounded-full"
-              style={{ backgroundColor: moon.color }}
-            />
-          </div>
+          </Link>
         </ScrollReveal>
       ))}
     </div>
