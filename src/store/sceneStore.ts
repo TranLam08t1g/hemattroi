@@ -1,29 +1,27 @@
 import { create } from 'zustand'
 
 interface SceneState {
-  selectedPlanet: string | null
+  focusPlanet: string | null
+  orbitMode: number
   isDragging: boolean
   rotationY: number
   rotationX: number
-  showOrbits: boolean
-  setSelectedPlanet: (id: string | null) => void
+  setFocusPlanet: (id: string | null) => void
+  cycleOrbitMode: () => void
   setIsDragging: (v: boolean) => void
   setRotationY: (v: number) => void
   setRotationX: (v: number) => void
-  setShowOrbits: (v: boolean) => void
-  toggleOrbits: () => void
 }
 
 export const useSceneStore = create<SceneState>((set) => ({
-  selectedPlanet: null,
+  focusPlanet: null,
+  orbitMode: 0,
   isDragging: false,
   rotationY: 0,
   rotationX: 0.15,
-  showOrbits: true,
-  setSelectedPlanet: (id) => set({ selectedPlanet: id }),
+  setFocusPlanet: (id) => set({ focusPlanet: id }),
+  cycleOrbitMode: () => set((s) => ({ orbitMode: (s.orbitMode + 1) % 3 })),
   setIsDragging: (v) => set({ isDragging: v }),
   setRotationY: (v) => set({ rotationY: v }),
   setRotationX: (v) => set({ rotationX: Math.max(-0.8, Math.min(0.8, v)) }),
-  setShowOrbits: (v) => set({ showOrbits: v }),
-  toggleOrbits: () => set((s) => ({ showOrbits: !s.showOrbits })),
 }))

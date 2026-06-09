@@ -1,12 +1,14 @@
 import { useSceneStore } from '../../store/sceneStore'
 
+const LABELS = ['Tất Cả', 'Hành Tinh ✕', 'Tất Cả ✕']
+
 export function OrbitToggle() {
-  const showOrbits = useSceneStore((s) => s.showOrbits)
-  const toggleOrbits = useSceneStore((s) => s.toggleOrbits)
+  const orbitMode = useSceneStore((s) => s.orbitMode)
+  const cycleOrbitMode = useSceneStore((s) => s.cycleOrbitMode)
 
   return (
     <button
-      onClick={toggleOrbits}
+      onClick={cycleOrbitMode}
       className="fixed bottom-10 right-12 z-50 pointer-events-auto cursor-pointer
                  font-mono text-[10px] tracking-[0.25em] uppercase
                  border border-[rgba(255,255,255,0.08)] rounded-full px-5 py-2.5
@@ -18,16 +20,20 @@ export function OrbitToggle() {
       <span className="flex items-center gap-2.5">
         <span
           className={`inline-block h-1.5 w-1.5 rounded-full transition-all duration-500 ${
-            showOrbits
+            orbitMode < 2
               ? 'bg-[#00D4FF] shadow-[0_0_8px_rgba(0,212,255,0.6)]'
               : 'bg-[#4a4a5a]'
           }`}
         />
-        <span className={showOrbits ? 'text-white' : 'text-[#4a4a5a]'}>
-          Quỹ Đạo
-        </span>
-        <span className={showOrbits ? 'text-[#00D4FF]' : 'text-[#4a4a5a]'}>
-          {showOrbits ? 'BẬT' : 'TẮT'}
+        <span
+          className={`inline-block h-1.5 w-1.5 rounded-full transition-all duration-500 ${
+            orbitMode < 1
+              ? 'bg-[#00D4FF] shadow-[0_0_8px_rgba(0,212,255,0.6)]'
+              : 'bg-[#4a4a5a]'
+          }`}
+        />
+        <span className={orbitMode === 2 ? 'text-white' : 'text-white'}>
+          {LABELS[orbitMode]}
         </span>
       </span>
     </button>

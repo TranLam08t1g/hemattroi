@@ -1,15 +1,18 @@
 /* eslint-disable react-hooks/immutability */
-import { useRef, useMemo, useState, useEffect } from 'react'
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { Html } from '@react-three/drei'
 import type { PlanetData } from '../../data/planets'
 import { planetVertexShader, planetFragmentShader } from '../../shaders/planet'
 import { MoonOrbitPath } from './MoonOrbitPath'
+import { useSceneStore } from '../../store/sceneStore'
 
 interface PlanetProps {
   data: PlanetData
   moonOrbitRadii?: number[]
   children?: React.ReactNode
+  registerRef?: (el: THREE.Group | null) => void
 }
 
 const DEFAULT_WHITE = (() => {
@@ -47,7 +50,7 @@ function getPlanetParams(id: string) {
   }
 }
 
-export function Planet({ data, moonOrbitRadii, children }: PlanetProps) {
+export function Planet({ data, moonOrbitRadii, children, registerRef }: PlanetProps) {
   const groupRef = useRef<THREE.Group>(null)
   const meshRef = useRef<THREE.Mesh>(null)
   const ringRef = useRef<THREE.Mesh>(null)
@@ -57,6 +60,22 @@ export function Planet({ data, moonOrbitRadii, children }: PlanetProps) {
   const activeTexture = texture ?? DEFAULT_WHITE
   const typeVal = getPlanetType(data.id)
   const params = getPlanetParams(data.id)
+  const tiltRad = (data.tilt * Math.PI) / 180
+  const focusPlanet = useSceneStore((s) => s.focusPlanet)
+  const setFocusPlanet = useSceneStore((s) => s.setFocusPlanet)
+
+  const handleLabelClick = useCallback(
+    (e: { stopPropagation: () => void }) => {
+      e.stopPropagation()
+      setFocusPlanet(focusPlanet === data.id ? null : data.id)
+    },
+    [setFocusPlanet, focusPlanet, data.id],
+  )
+
+  useEffect(() => {
+    registerRef?.(groupRef.current)
+    return () => registerRef?.(null)
+  }, [registerRef])
 
   const uniforms = useMemo(
     () => ({
@@ -97,41 +116,60 @@ export function Planet({ data, moonOrbitRadii, children }: PlanetProps) {
   useFrame((_, delta) => {
     angleRef.current += data.speed * delta * 0.8
     if (groupRef.current) {
-      groupRef.current.position.x = Math.cos(angleRef.current) * data.orbit
-      groupRef.current.position.z = Math.sin(angleRef.current) * data.orbit
+      const fp = useSceneStore.getState().focusPlanet
+      if (!fp) {
+        groupRef.current.position.x = Math.cos(angleRef.current) * data.orbit
+        groupRef.current.position.z = Math.sin(angleRef.current) * data.orbit
+      }
     }
     if (meshRef.current) {
-      meshRef.current.rotation.y += delta * data.speed * 2
+      if (!useSceneStore.getState().focusPlanet) {
+        meshRef.current.rotation.y += delta * data.speed * 2
+      }
     }
     uniforms.uTime.value += delta
   })
 
   return (
     <group ref={groupRef}>
-      <mesh ref={meshRef}>
-        <sphereGeometry args={[data.radius, 64, 64]} />
-        <shaderMaterial
-          vertexShader={planetVertexShader}
-          fragmentShader={planetFragmentShader}
-          uniforms={uniforms}
-        />
-      </mesh>
-      {data.hasRing && (
-        <mesh ref={ringRef} rotation={[Math.PI * 0.5, 0, 0.3]}>
-          <ringGeometry args={[data.radius * 1.3, data.radius * 2.2, 64]} />
-          <meshBasicMaterial
-            color={0xead6b8}
-            side={THREE.DoubleSide}
-            transparent
-            opacity={0.3}
-            depthWrite={false}
+      <Html position={[0, data.radius * 1.6, 0]} center style={{ pointerEvents: 'auto' }}>
+        <button
+          onClick={handleLabelClick}
+          className={`whitespace-nowrap rounded-full border px-3 py-1 font-mono text-[10px] tracking-[0.15em] uppercase transition-all duration-300 ${
+            focusPlanet === data.id
+              ? 'border-[rgba(0,212,255,0.5)] bg-[rgba(0,212,255,0.12)] text-[#00D4FF]'
+              : 'border-[rgba(255,255,255,0.06)] bg-[rgba(0,0,0,0.25)] text-[#6a6a7a] hover:border-[rgba(255,255,255,0.2)] hover:text-white'
+          }`}
+        >
+          {data.name.toUpperCase()}
+        </button>
+      </Html>
+      <group rotation={[0, 0, tiltRad]}>
+        <mesh ref={meshRef}>
+          <sphereGeometry args={[data.radius, 64, 64]} />
+          <shaderMaterial
+            vertexShader={planetVertexShader}
+            fragmentShader={planetFragmentShader}
+            uniforms={uniforms}
           />
         </mesh>
-      )}
-      {moonOrbitRadii?.map((r, i) => (
-        <MoonOrbitPath key={i} radius={r} />
-      ))}
-      {children}
+        {data.hasRing && (
+          <mesh ref={ringRef} rotation={[Math.PI * 0.5, 0, 0.3]}>
+            <ringGeometry args={[data.radius * 1.3, data.radius * 2.2, 64]} />
+            <meshBasicMaterial
+              color={0xead6b8}
+              side={THREE.DoubleSide}
+              transparent
+              opacity={0.3}
+              depthWrite={false}
+            />
+          </mesh>
+        )}
+        {moonOrbitRadii?.map((r, i) => (
+          <MoonOrbitPath key={i} radius={r} />
+        ))}
+        {children}
+      </group>
     </group>
   )
 }

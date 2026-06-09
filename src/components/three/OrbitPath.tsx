@@ -8,7 +8,7 @@ interface OrbitPathProps {
 }
 
 export function OrbitPath({ radius, color = 0x00D4FF }: OrbitPathProps) {
-  const showOrbits = useSceneStore((s) => s.showOrbits)
+  const orbitMode = useSceneStore((s) => s.orbitMode)
 
   const line = useMemo(() => {
     const pts: THREE.Vector3[] = []
@@ -32,7 +32,7 @@ export function OrbitPath({ radius, color = 0x00D4FF }: OrbitPathProps) {
     return l
   }, [radius, color])
 
-  if (!showOrbits) return null
+  if (orbitMode >= 1) return null
 
   return <primitive object={line} />
 }

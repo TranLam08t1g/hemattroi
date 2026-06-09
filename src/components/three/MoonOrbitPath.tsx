@@ -8,7 +8,7 @@ interface MoonOrbitPathProps {
 }
 
 export function MoonOrbitPath({ radius, color = 0x00D4FF }: MoonOrbitPathProps) {
-  const showOrbits = useSceneStore((s) => s.showOrbits)
+  const orbitMode = useSceneStore((s) => s.orbitMode)
 
   const line = useMemo(() => {
     const pts: THREE.Vector3[] = []
@@ -32,7 +32,7 @@ export function MoonOrbitPath({ radius, color = 0x00D4FF }: MoonOrbitPathProps) 
     return l
   }, [radius, color])
 
-  if (!showOrbits) return null
+  if (orbitMode >= 2) return null
 
   return <primitive object={line} />
 }

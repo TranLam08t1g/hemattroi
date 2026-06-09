@@ -4,6 +4,7 @@ import { SolarSystem } from './SolarSystem'
 
 export function SceneSetup() {
   const setDragging = useSceneStore((s) => s.setIsDragging)
+  const setFocusPlanet = useSceneStore((s) => s.setFocusPlanet)
 
   return (
     <Canvas
@@ -13,6 +14,7 @@ export function SceneSetup() {
       onPointerDown={() => setDragging(true)}
       onPointerUp={() => setDragging(false)}
       onPointerLeave={() => setDragging(false)}
+      onPointerMissed={() => setFocusPlanet(null)}
     >
       <ambientLight intensity={0.35} color="#222244" />
       <pointLight position={[0, 0, 0]} intensity={1.8} distance={50} color="#FF6B00" />

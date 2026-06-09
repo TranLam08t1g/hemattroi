@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { planetVertexShader, planetFragmentShader } from '../../shaders/planet'
 import { DEFAULT_WHITE, getPlanetType, getPlanetParams } from '../../utils/planetHelpers'
+import { useSceneStore } from '../../store/sceneStore'
 
 const SUN_COLOR = 0xffa500
 const SUN_ID = 'sun'
@@ -59,7 +60,9 @@ export function Sun() {
   useFrame((_, delta) => {
     if (meshRef.current) {
       uniforms.uTime.value += delta
-      meshRef.current.rotation.y += delta * 0.15
+      if (!useSceneStore.getState().focusPlanet) {
+        meshRef.current.rotation.y += delta * 0.15
+      }
     }
   })
 
