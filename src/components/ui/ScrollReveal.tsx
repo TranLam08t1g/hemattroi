@@ -34,10 +34,11 @@ export function ScrollReveal({
       y,
       x,
       opacity: 0,
+      filter: 'blur(8px)',
       duration: 0.9,
       delay,
       stagger: stagger ? 0.08 : 0,
-      ease: 'power3.out',
+      ease: 'power4.out',
       scrollTrigger: {
         trigger: ref.current,
         start: threshold,

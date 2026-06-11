@@ -1,35 +1,78 @@
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { SplitText } from 'gsap/SplitText'
 import { Button } from '../ui/Button'
 
-gsap.registerPlugin(useGSAP)
+gsap.registerPlugin(useGSAP, SplitText)
 
 interface HeroSectionProps {
   onReady?: () => void
 }
 
-const TITLE_LINE_1 = 'HỆ'
-const TITLE_LINE_2 = 'MẶT TRỜI'
-
 export function HeroSection({ onReady }: HeroSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const titleLine1Ref = useRef<HTMLSpanElement>(null)
+  const titleLine2Ref = useRef<HTMLSpanElement>(null)
+  const subtitleRef = useRef<HTMLSpanElement>(null)
 
   useGSAP(() => {
+    if (!titleLine1Ref.current || !titleLine2Ref.current || !subtitleRef.current) return
+
+    const split1 = SplitText.create(titleLine1Ref.current, { type: 'chars', tag: 'span' })
+    const split2 = SplitText.create(titleLine2Ref.current, { type: 'chars', tag: 'span' })
+    const splitSub = SplitText.create(subtitleRef.current, { type: 'chars', tag: 'span' })
+
     const tl = gsap.timeline({
-      defaults: { ease: 'power3.out' },
+      defaults: { ease: 'power4.out' },
       onComplete: () => onReady?.(),
     })
 
-    tl.from('.hero-title', { y: 60, opacity: 0, duration: 0.8 }, 0.2)
-      .from('.hero-subtitle', { y: 40, opacity: 0, duration: 0.7 }, '-=0.4')
-      .from('.hero-text', { y: 30, opacity: 0, duration: 0.7 }, '-=0.3')
-      .from('.hero-btn', { y: 20, opacity: 0, duration: 0.6 }, '-=0.2')
-      .from(
-        '.hero-stat',
-        { y: 20, opacity: 0, duration: 0.5, stagger: 0.1 },
-        '-=0.2',
-      )
+    tl.from(split1.chars, {
+      y: 80,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.1,
+    }, 0.2)
+
+    tl.from(split2.chars, {
+      y: 80,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.08,
+    }, '-=0.5')
+
+    tl.from(splitSub.chars, {
+      y: 30,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.04,
+    }, '-=0.35')
+
+    tl.from('.hero-text', {
+      y: 30,
+      opacity: 0,
+      duration: 0.7,
+    }, '-=0.35')
+
+    tl.from('.hero-btn', {
+      y: 20,
+      opacity: 0,
+      duration: 0.6,
+    }, '-=0.25')
+
+    tl.from('.hero-stat', {
+      y: 20,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.1,
+    }, '-=0.2')
+
+    return () => {
+      split1.revert()
+      split2.revert()
+      splitSub.revert()
+    }
   }, { scope: containerRef })
 
   return (
@@ -127,32 +170,12 @@ export function HeroSection({ onReady }: HeroSectionProps) {
       {/* Main hero content */}
       <div ref={containerRef} className="relative z-10 max-w-[720px]">
         <h1 className="hero-title font-heading text-[clamp(24px,4.5vw,65px)] font-light leading-[0.95] tracking-[clamp(6px,0.9vw,14px)] text-white">
-          <span className="block">
-            {TITLE_LINE_1.split('').map((c, i) => (
-              <span
-                key={`s1-${i}`}
-                className="hero-title-char"
-                style={{ animationDelay: `${0.3 + i * 0.08}s` }}
-              >
-                {c}
-              </span>
-            ))}
-          </span>
-          <span className="block">
-            {TITLE_LINE_2.split('').map((c, i) => (
-              <span
-                key={`s2-${i}`}
-                className="hero-title-char"
-                style={{ animationDelay: `${0.7 + i * 0.08}s` }}
-              >
-                {c}
-              </span>
-            ))}
-          </span>
+          <span ref={titleLine1Ref} className="block">HỆ</span>
+          <span ref={titleLine2Ref} className="block">MẶT TRỜI</span>
         </h1>
 
         <h2 className="hero-subtitle mt-3 font-heading text-[clamp(18px,2.6vw,40px)] font-light tracking-[clamp(6px,1vw,14px)] text-white md:mt-4">
-          <span className="hero-typewriter">Hành Trình Khám Phá</span>
+          <span ref={subtitleRef}>Hành Trình Khám Phá</span>
         </h2>
 
         <p className="hero-text mt-5 max-w-[440px] font-heading text-[13px] leading-relaxed tracking-[0.25em] text-[#4a4a5a] md:mt-6">
@@ -161,7 +184,7 @@ export function HeroSection({ onReady }: HeroSectionProps) {
         </p>
 
         <div className="hero-btn mt-8 flex items-center gap-4">
-          <Button>Khởi Động Hành Trình</Button>
+          <Button rightIcon={<span className="text-[10px]">&rarr;</span>}>Khởi Động Hành Trình</Button>
           <span className="font-mono text-[10px] tracking-[0.25em] text-[#4a4a5a]">
             ⌘ + E
           </span>

@@ -264,7 +264,7 @@ export function PlanetDetail() {
         <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-14 md:px-12 lg:px-16">
           <div className="mx-auto max-w-5xl">
             <Link
-              to="/planets"
+              to="/gallery"
               className="inline-block font-mono text-[10px] tracking-[0.3em] text-[#4a4a5a] transition-colors hover:text-white uppercase"
             >
               &larr; Tất cả hành tinh

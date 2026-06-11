@@ -99,8 +99,10 @@ interface GalleryCardProps {
 
 function GalleryCard({ planet }: GalleryCardProps) {
   return (
-    <div className="group glass relative h-[420px] overflow-hidden rounded-2xl">
+    <div className="group glass relative h-[420px] overflow-hidden rounded-2xl transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-[rgba(0,212,255,0.3)] hover:shadow-[0_0_60px_rgba(0,212,255,0.06)]">
       <div className="absolute inset-0 opacity-95" />
+
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-[rgba(0,212,255,0.04)] opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[rgba(11,11,16,0.95)] via-[rgba(11,11,16,0.5)] to-transparent" />
 
@@ -115,7 +117,7 @@ function GalleryCard({ planet }: GalleryCardProps) {
       <div className="absolute inset-x-0 bottom-0 z-10 p-6">
         <div className="flex items-end justify-between">
           <div>
-            <h3 className="font-heading text-3xl font-bold tracking-[0.1em] text-white">
+            <h3 className="font-heading text-3xl font-bold tracking-[0.1em] text-white transition-colors duration-500 group-hover:text-white">
               {planet.name}
             </h3>
             <p className="mt-1 font-mono text-[10px] tracking-[0.2em] text-[#4a4a5a] uppercase">
@@ -123,7 +125,7 @@ function GalleryCard({ planet }: GalleryCardProps) {
             </p>
           </div>
           <span
-            className="inline-block h-3 w-3 rounded-full"
+            className="inline-block h-3 w-3 rounded-full transition-shadow duration-500 group-hover:shadow-[0_0_16px]"
             style={{
               backgroundColor: planet.color,
               boxShadow: `0 0 12px ${planet.color}`,

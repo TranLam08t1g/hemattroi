@@ -14,11 +14,12 @@ export function RootLayout() {
 
   useGSAP(() => {
     if (contentRef.current) {
-      gsap.from(contentRef.current, {
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
+      tl.from(contentRef.current, {
         opacity: 0,
-        y: 20,
-        duration: 0.6,
-        ease: 'power3.out',
+        y: 30,
+        scale: 0.97,
+        duration: 0.8,
       })
     }
   }, [location.pathname])

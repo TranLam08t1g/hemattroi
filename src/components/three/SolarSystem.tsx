@@ -19,6 +19,7 @@ export function SolarSystem() {
   const rotX = useSceneStore((s) => s.rotationX)
   const isDragging = useSceneStore((s) => s.isDragging)
   const focusPlanet = useSceneStore((s) => s.focusPlanet)
+  const zoomDistance = useSceneStore((s) => s.zoomDistance)
   const setRotY = useSceneStore((s) => s.setRotationY)
   const setRotX = useSceneStore((s) => s.setRotationX)
   const prevMouse = useRef({ x: 0, y: 0 })
@@ -48,9 +49,9 @@ export function SolarSystem() {
       }
       camera.position.copy(
         new THREE.Vector3(
-          camTarget.current.x + 5,
-          camTarget.current.y + 3,
-          camTarget.current.z + 8,
+          camTarget.current.x + 5 * (zoomDistance / 20),
+          camTarget.current.y + 3 * (zoomDistance / 20),
+          camTarget.current.z + 8 * (zoomDistance / 20),
         ),
       )
       camera.lookAt(camTarget.current)
@@ -58,7 +59,7 @@ export function SolarSystem() {
       const defaultPos = new THREE.Vector3(0, 0, 0)
       camTarget.current.lerp(defaultPos, 0.06)
       camera.position.lerp(
-        new THREE.Vector3(0, 5, 20),
+        new THREE.Vector3(0, 5 * (zoomDistance / 20), zoomDistance),
         delta * 1.5,
       )
       camera.lookAt(0, 0, 0)

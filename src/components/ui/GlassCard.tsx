@@ -7,11 +7,16 @@ interface GlassCardProps extends HTMLAttributes<HTMLDivElement> {
 
 export function GlassCard({ children, className = '', ...props }: GlassCardProps) {
   return (
-    <div
-      className={`glass rounded-2xl p-6 md:p-8 ${className}`}
-      {...props}
-    >
-      {children}
+    <div className="rounded-[1.25rem] bg-white/[0.04] p-[2px]">
+      <div
+        className={`rounded-[calc(1.25rem-2px)] bg-[#0B0B10] backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] ${className}`}
+        style={{
+          border: '1px solid rgba(255,255,255,0.08)',
+        }}
+        {...props}
+      >
+        {children}
+      </div>
     </div>
   )
 }
